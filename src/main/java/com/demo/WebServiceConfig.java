@@ -1,19 +1,27 @@
 package com.demo;
 
+import javax.sql.DataSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.transport.http.MessageDispatcherServlet;
 import org.springframework.ws.wsdl.wsdl11.SimpleWsdl11Definition;
 
+import com.demo.util.DBConnector;
 
 @Configuration
 public class WebServiceConfig {
-
+	private static final Logger LOG = LoggerFactory.getLogger(WebServiceConfig.class);
 
 	@Bean
 	public ServletRegistrationBean messageDispatcherServlet(ApplicationContext applicationContext) {
@@ -23,21 +31,41 @@ public class WebServiceConfig {
 		return new ServletRegistrationBean(servlet, "/ws/*");
 	}
 
-	 @Bean
-	    public Jaxb2Marshaller customerLocationClientMarshaller() {
-	        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-	        marshaller.setPackagesToScan("com.demo.fedex.domain", "com.demo.domain");
-	        return marshaller;
-	    }
-	    @Bean("TrackerService")
-	    public SimpleWsdl11Definition definition1509() {
-	        SimpleWsdl11Definition wsdl = new SimpleWsdl11Definition();
-	        wsdl.setWsdl(customerServiceWsdl());
-	        return wsdl;
-	    }
+	@Bean
+	public Jaxb2Marshaller customerLocationClientMarshaller() {
+		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+		marshaller.setPackagesToScan("com.demo.fedex.domain", "com.demo.domain");
+		return marshaller;
+	}
 
-	    @Bean
-	    public Resource customerServiceWsdl() {
-	        return new ClassPathResource("TrackingService.wsdl");
-	    }
+	@Bean("TrackerService")
+	public SimpleWsdl11Definition definition1509() {
+		SimpleWsdl11Definition wsdl = new SimpleWsdl11Definition();
+		wsdl.setWsdl(customerServiceWsdl());
+		return wsdl;
+	}
+
+	@Bean
+	public Resource customerServiceWsdl() {
+		return new ClassPathResource("TrackingService.wsdl");
+	}
+
+	@Bean(name = { "com.demo.DataSource" })
+	@ConfigurationProperties(prefix = "datasource.demo")
+	@Primary
+	public DataSource demoDataSource() {
+		return DataSourceBuilder.create().build();
+	}
+
+	@Bean(name = "demoDao")
+	public DBConnector demoDao() {
+		DBConnector obj = new DBConnector();
+		obj.setDataSource(demoDataSource());
+		try {
+			obj.getJdbcTemplate().execute("SELECT NOW()");
+		} catch (Exception e) {
+			LOG.error(" Error while connecting to ConnectionManager.", e);
+		}
+		return obj;
+	}
 }

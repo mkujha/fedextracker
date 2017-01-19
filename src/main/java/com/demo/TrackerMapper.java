@@ -1,10 +1,6 @@
 package com.demo;
 
-import java.math.BigInteger;
 import java.util.List;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -32,7 +28,6 @@ import com.demo.domain.PackagingType;
 import com.demo.domain.PhysicalPackagingType;
 import com.demo.domain.PieceCountVerificationDetail;
 import com.demo.domain.SignatureImageDetail;
-import com.demo.domain.StringBarcode;
 import com.demo.domain.TrackAdvanceNotificationDetail;
 import com.demo.domain.TrackChargeDetail;
 import com.demo.domain.TrackDeliveryLocationType;
@@ -54,14 +49,12 @@ import com.demo.domain.TrackingDateOrTimestamp;
 import com.demo.domain.TransactionDetail;
 import com.demo.domain.VersionId;
 import com.demo.domain.Weight;
-import com.demo.domain.WriteEventLogReturn;
+import com.demo.domain.WriteEventLogResponse;
 import com.demo.fedex.domain.TrackReply;
 
 @Mapper
 public interface TrackerMapper {
 	TrackerMapper INSTANCE = Mappers.getMapper(TrackerMapper.class);
-
-	WriteEventLogReturn map(TrackReply reply);
 
 	NotificationSeverityType map(com.demo.fedex.domain.NotificationSeverityType reply);
 
@@ -246,5 +239,8 @@ public interface TrackerMapper {
 	com.demo.domain.AppointmentWindowType map(com.demo.fedex.domain.AppointmentWindowType value);
 	com.demo.domain.DateRange map(com.demo.fedex.domain.DateRange value);
 	com.demo.domain.LocalTimeRange map(com.demo.fedex.domain.LocalTimeRange value);
+
+	WriteEventLogResponse map(TrackReply reply);
+	
 	
 }
