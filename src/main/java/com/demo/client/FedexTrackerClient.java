@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
-import com.demo.domain.WriteEventLog;
+import com.demo.domain.WriteEventLogRequest;
 import com.demo.fedex.domain.CarrierCodeType;
 import com.demo.fedex.domain.ClientDetail;
 import com.demo.fedex.domain.CompletedTrackDetail;
@@ -75,7 +75,7 @@ public class FedexTrackerClient extends WebServiceGatewaySupport {
 		}
 	}
 
-	public TrackRequest createRequest(WriteEventLog writeEventLog) {
+	public TrackRequest createRequest(WriteEventLogRequest writeEventLog) {
 		TrackRequest request = new TrackRequest();
 		WebAuthenticationDetail authenticationDetail = new WebAuthenticationDetail();
 		WebAuthenticationCredential authenticationCredential = new WebAuthenticationCredential();
@@ -106,7 +106,7 @@ public class FedexTrackerClient extends WebServiceGatewaySupport {
 		TrackPackageIdentifier trackPackageIdentifier = new TrackPackageIdentifier();
 		trackPackageIdentifier.setType(TrackIdentifierType.TRACKING_NUMBER_OR_DOORTAG);
 		trackPackageIdentifier.setValue(writeEventLog.getTrackingNumber());
-		trackSelectionDetail.setTrackingNumberUniqueIdentifier(writeEventLog.getTrackingNumber());
+		//trackSelectionDetail.setTrackingNumberUniqueIdentifier(writeEventLog.getTrackingNumber());
 		trackSelectionDetail.setPackageIdentifier(trackPackageIdentifier);
 		trackSelectionDetail.setShipmentAccountNumber("510087020");
 		trackSelectionDetail.setSecureSpodAccount("510051408");

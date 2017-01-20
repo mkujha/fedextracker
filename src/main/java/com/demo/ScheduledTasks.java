@@ -16,12 +16,11 @@ import org.springframework.stereotype.Component;
 
 import com.demo.client.FedexTrackerClient;
 import com.demo.domain.WriteEventLog;
+import com.demo.domain.WriteEventLogRequest;
 import com.demo.fedex.domain.Address;
-import com.demo.fedex.domain.ClientDetail;
 import com.demo.fedex.domain.CompletedTrackDetail;
 import com.demo.fedex.domain.CustomerExceptionRequestDetail;
 import com.demo.fedex.domain.DeliveryOptionEligibilityDetail;
-import com.demo.fedex.domain.Money;
 import com.demo.fedex.domain.Notification;
 import com.demo.fedex.domain.NotificationSeverityType;
 import com.demo.fedex.domain.TrackDetail;
@@ -46,11 +45,15 @@ public class ScheduledTasks {
 
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
-	@Scheduled(fixedRate = 5000)
+	@Scheduled(fixedRate = 50000000)
+	// @Scheduled(cron="0 0 8-10 * * *")
 	public void reportCurrentTime() throws SQLException {
 		log.info("The time is now {}", dateFormat.format(new Date()));
-		WriteEventLog eventLog = dbConnector.getWriteEventLog();		
-		TrackReply reply = fedexTrackerClient.trackFedEx(fedexTrackerClient.createRequest(eventLog));
+		WriteEventLog eventLog = new WriteEventLog();
+		WriteEventLogRequest eventLogRequest = dbConnector.getWriteEventLog();
+		eventLog.setRequest(eventLogRequest);
+		
+		TrackReply reply = fedexTrackerClient.trackFedEx(fedexTrackerClient.createRequest(eventLogRequest));
 		log.info(" DB value" + reply);
 		//
 		if (printNotifications(reply.getNotifications())) {
@@ -75,16 +78,16 @@ public class ScheduledTasks {
 				cont = printNotifications(ctd.get(i).getNotifications());
 				System.out.println("  Completed Track Detail Notifications--");
 			}
-			if(cont){
+			if (cont) {
 				print("DuplicateWayBill", ctd.get(i).isDuplicateWaybill());
 				print("Track Details Count", ctd.get(i).getTrackDetailsCount());
-				if(ctd.get(i).isMoreData()){
+				if (ctd.get(i).isMoreData()) {
 					System.out.println("  Additional package data not yet retrieved");
-					if(ctd.get(i).getPagingToken()!=null){
+					if (ctd.get(i).getPagingToken() != null) {
 						print("  Paging Token", ctd.get(i).getPagingToken());
 					}
 				}
-				printTrackDetail(ctd.get(i).getTrackDetails());				
+				printTrackDetail(ctd.get(i).getTrackDetails());
 			}
 			System.out.println("--Completed Tracking Detail--");
 			System.out.println();
@@ -334,36 +337,6 @@ public class ScheduledTasks {
 			return true;
 		}
 		return false;
-	}
-
-	private ClientDetail createClientDetail() {
-		ClientDetail clientDetail = new ClientDetail();
-		String accountNumber = System.getProperty("accountNumber");
-		String meterNumber = System.getProperty("meterNumber");
-
-		//
-		// See if the accountNumber and meterNumber properties are set,
-		// if set use those values, otherwise default them to "XXX"
-		//
-		if (accountNumber == null) {
-			accountNumber = "510087666"; // Replace "XXX" with clients account
-											// number
-		}
-		if (meterNumber == null) {
-			meterNumber = "118775182"; // Replace "XXX" with clients meter
-										// number
-		}
-		clientDetail.setAccountNumber(accountNumber);
-		clientDetail.setMeterNumber(meterNumber);
-		return clientDetail;
-	}
-
-	private void printMoney(Money money) {
-		if (money != null) {
-			String currency = money.getCurrency();
-			String amount = money.getAmount().toString();
-			print("Charge", currency + " " + amount);
-		}
 	}
 
 	private boolean printNotifications(Object n) {

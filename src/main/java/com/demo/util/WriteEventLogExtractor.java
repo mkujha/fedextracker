@@ -6,14 +6,15 @@ import java.sql.SQLException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
-import com.demo.domain.WriteEventLog;
+import com.demo.domain.WriteEventLogRequest;
 
-public class WriteEventLogExtractor implements ResultSetExtractor<WriteEventLog> {
+public class WriteEventLogExtractor implements ResultSetExtractor<WriteEventLogRequest> {
 
 	@Override
-	public WriteEventLog extractData(ResultSet rs) throws SQLException, DataAccessException {
-		WriteEventLog writeEventLogRequest = new WriteEventLog();
-		if (rs.next()) {
+	public WriteEventLogRequest extractData(ResultSet rs) throws SQLException, DataAccessException {
+		WriteEventLogRequest writeEventLogRequest = new WriteEventLogRequest();
+		String trackingNo ="";
+		while (rs.next()) {
 			//writeEventLogRequest.setInvoiceNo(rs.getString("INVOICENO"));
 			//writeEventLogRequest.setEventArrivalLocation(rs.getString("EVENTARRIVALLOCATION"));
 			//writeEventLogRequest.setEventCity(rs.getString("EVENTCITY"));
@@ -25,7 +26,8 @@ public class WriteEventLogExtractor implements ResultSetExtractor<WriteEventLog>
 			//writeEventLogRequest.setEventZip(rs.getString("EVENTZIP"));
 			//writeEventLogRequest.setEventState(rs.getString("EVENTSTATE"));
 			//writeEventLogRequest.setEventType(rs.getString("EVENTTYPE"));
-			writeEventLogRequest.setTrackingNumber(rs.getString("TRACKING_NUMBER"));
+			trackingNo = trackingNo +"," + rs.getString("TRACKING_NUMBER");
+			writeEventLogRequest.setTrackingNumber(trackingNo.substring(1,trackingNo.length()));
 			//writeEventLogRequest.setEventStatusExceptionCode(rs.getString("EVENTSTATUSEXCEPTIONCODE"));
 			// writeEventLogRequest.setEventStatus(rs.getString("EVENTSTATUSEXCEPTIONCODE"));
 			// EVENTSTATUSEXCEPTIONDESC

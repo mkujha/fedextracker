@@ -25,7 +25,7 @@ public class TrackerEndpoint {
 	public WriteEventLogResponse trackFedEx(@RequestPayload WriteEventLog request) {
 		WriteEventLogResponse response = new WriteEventLogResponse();
 
-		TrackReply reply = fedexTrackerClient.trackFedEx(fedexTrackerClient.createRequest(request));
+		TrackReply reply = fedexTrackerClient.trackFedEx(fedexTrackerClient.createRequest(request.getRequest()));
 		if (reply != null) {
 			response = TrackerMapper.INSTANCE.map(reply);
 		}

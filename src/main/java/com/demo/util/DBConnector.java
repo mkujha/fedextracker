@@ -7,7 +7,7 @@ import javax.sql.DataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import com.demo.domain.WriteEventLog;
+import com.demo.domain.WriteEventLogRequest;
 
 
 @Component
@@ -27,8 +27,8 @@ public class DBConnector {
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
-	public WriteEventLog getWriteEventLog() throws SQLException {
-		return this.getJdbcTemplate().query("SELECT * FROM SHIPING_EVENT_LOG", new WriteEventLogExtractor());
+	public WriteEventLogRequest getWriteEventLog() throws SQLException {
+		return this.getJdbcTemplate().query("SELECT * FROM SHIPING_EVENT_LOG  where status != 'DELIVERED'", new WriteEventLogExtractor());
 	}
 
 }

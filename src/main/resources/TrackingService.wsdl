@@ -7,28 +7,46 @@
 			<xs:element name="writeEventLog">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="trackingNumber" type="xs:string" />
+						<xs:element name="request" type="ns:WriteEventLogRequest" />
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
+			<xs:complexType name="WriteEventLogRequest">
+				<xs:sequence>
+					<xs:element name="eventArrivalLocation" type="xs:string" minOccurs="0" />
+					<xs:element name="eventCity" type="xs:string" minOccurs="0" />
+					<xs:element name="eventCountry" type="xs:string" minOccurs="0" />
+					<xs:element name="eventDate" type="xs:date" minOccurs="0" /> <!-- date type -->
+					<xs:element name="eventDescription" type="xs:string" minOccurs="0" />
+					<xs:element name="eventState" type="xs:string" minOccurs="0" />
+					<xs:element name="eventStatusExceptionCode" type="xs:string" minOccurs="0" />
+					<xs:element name="eventType" type="xs:string" minOccurs="0" />
+					<xs:element name="eventZip" type="xs:string" minOccurs="0" />
+					<xs:element name="invoiceNo" type="xs:string" minOccurs="0" />
+					<xs:element name="trackingNumber" type="xs:string" minOccurs="0" />
+				</xs:sequence>
+			</xs:complexType>
 			<xs:element name="writeEventLogResponse">
 				<xs:complexType>
 					<xs:sequence>
 						<xs:element name="HighestSeverity" type="ns:NotificationSeverityType" minOccurs="1">
 							<xs:annotation>
-								<xs:documentation>This contains the severity type of the most severe Notification in the Notifications array.</xs:documentation>
+								<xs:documentation>This contains the severity type of the most severe Notification in the Notifications array.
+								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
 						<xs:element name="Notifications" type="ns:Notification" minOccurs="1" maxOccurs="unbounded">
 							<xs:annotation>
 								<xs:documentation>Information about the request/reply such was the transaction successful or not, and any
-									additional information relevant to the request and/or reply. There may be multiple Notifications in a reply.</xs:documentation>
+									additional information relevant to the request and/or reply. There may be multiple Notifications in a reply.
+								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
 						<xs:element name="TransactionDetail" type="ns:TransactionDetail" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Contains the CustomerTransactionDetail that is echoed back to the caller for matching requests
-									and replies and a Localization element for defining the language/translation used in the reply data.</xs:documentation>
+									and replies and a Localization element for defining the language/translation used in the reply data.
+								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
 						<xs:element name="Version" type="ns:VersionId" minOccurs="1">
@@ -67,19 +85,22 @@
 								other applicable information. NOTE - Additional information that may be of interest to you about your
 								transaction. WARNING - Additional information that you need to know about your transaction that you may need to
 								take action on. ERROR - Information about an error that occurred while processing your transaction. FAILURE -
-								FedEx was unable to process your transaction at this time due to a system failure. Please try again later</xs:documentation>
+								FedEx was unable to process your transaction at this time due to a system failure. Please try again later
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="Source" type="xs:string" minOccurs="1">
 						<xs:annotation>
 							<xs:documentation>Indicates the source of this notification. Combined with the Code it uniquely identifies this
-								notification</xs:documentation>
+								notification
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="Code" type="xs:string" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>A code that represents this notification. Combined with the Source it uniquely identifies this
-								notification.</xs:documentation>
+								notification.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="Message" type="xs:string" minOccurs="0">
@@ -90,13 +111,15 @@
 					<xs:element name="LocalizedMessage" type="xs:string" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>The translated message. The language and locale specified in the ClientDetail. Localization are
-								used to determine the representation. Currently only supported in a TrackReply.</xs:documentation>
+								used to determine the representation. Currently only supported in a TrackReply.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="MessageParameters" type="ns:NotificationParameter" minOccurs="0" maxOccurs="unbounded">
 						<xs:annotation>
 							<xs:documentation>A collection of name/value pairs that provide specific data to help the client determine the
-								nature of an error (or warning, etc.) without having to parse the message string.</xs:documentation>
+								nature of an error (or warning, etc.) without having to parse the message string.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 				</xs:sequence>
@@ -106,13 +129,15 @@
 				<xs:sequence>
 					<xs:element name="CustomerTransactionId" type="xs:string" minOccurs="0">
 						<xs:annotation>
-							<xs:documentation>Free form text to be echoed back in the reply. Used to match requests and replies.</xs:documentation>
+							<xs:documentation>Free form text to be echoed back in the reply. Used to match requests and replies.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="Localization" type="ns:Localization" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>Governs data payload language/translations (contrasted with ClientDetail.localization, which
-								governs Notification.localizedMessage language selection).</xs:documentation>
+								governs Notification.localizedMessage language selection).
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 				</xs:sequence>
@@ -121,7 +146,8 @@
 			<xs:complexType name="VersionId">
 				<xs:annotation>
 					<xs:documentation>Identifies the version/level of a service operation expected by a caller (in each request) and
-						performed by the callee (in each reply).</xs:documentation>
+						performed by the callee (in each reply).
+					</xs:documentation>
 				</xs:annotation>
 				<xs:sequence>
 					<xs:element name="ServiceId" type="xs:string" fixed="trck" minOccurs="1">
@@ -154,7 +180,8 @@
 					<xs:element name="DuplicateWaybill" type="xs:boolean" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>True if duplicate packages (more than one package with the same tracking number) have been
-								found, and only limited data will be provided for each one.</xs:documentation>
+								found, and only limited data will be provided for each one.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="MoreData" type="xs:boolean" minOccurs="0">
@@ -165,7 +192,8 @@
 					<xs:element name="PagingToken" type="xs:string" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>Value that must be passed in a TrackNotification request to retrieve the next set of packages
-								(when MoreDataAvailable = true).</xs:documentation>
+								(when MoreDataAvailable = true).
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="TrackDetailsCount" type="xs:nonNegativeInteger" minOccurs="0">
@@ -185,7 +213,8 @@
 				<xs:sequence>
 					<xs:element name="Id" type="xs:string" minOccurs="0">
 						<xs:annotation>
-							<xs:documentation>Identifies the type of data contained in Value (e.g. SERVICE_TYPE, PACKAGE_SEQUENCE, etc..).</xs:documentation>
+							<xs:documentation>Identifies the type of data contained in Value (e.g. SERVICE_TYPE, PACKAGE_SEQUENCE, etc..).
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="Value" type="xs:string" minOccurs="0">
@@ -232,7 +261,8 @@
 							<xs:documentation>When duplicate tracking numbers exist this data is returned with summary information for each
 								of the duplicates. The summary information is used to determine which of the duplicates the intended tracking
 								number is. This identifier is used on a subsequent track request to retrieve the tracking data for the desired
-								tracking number.</xs:documentation>
+								tracking number.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="StatusDetail" type="ns:TrackStatusDetail" minOccurs="0">
@@ -243,7 +273,8 @@
 					<xs:element name="InformationNotes" type="ns:TrackInformationNoteDetail" minOccurs="0" maxOccurs="unbounded">
 						<xs:annotation>
 							<xs:documentation>Notifications to the end user that provide additional information relevant to the tracked
-								shipment. For example, a notification may indicate that a change in behavior has occurred.</xs:documentation>
+								shipment. For example, a notification may indicate that a change in behavior has occurred.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="CustomerExceptionRequests" type="ns:CustomerExceptionRequestDetail" minOccurs="0"
@@ -251,14 +282,16 @@
 					<xs:element name="Reconciliation" type="ns:TrackReconciliation" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>Used to report the status of a piece of a multiple piece shipment which is no longer traveling
-								with the rest of the packages in the shipment or has not been accounted for.</xs:documentation>
+								with the rest of the packages in the shipment or has not been accounted for.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="ServiceCommitMessage" type="xs:string" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>Used to convey information such as. 1. FedEx has received information about a package but has
 								not yet taken possession of it. 2. FedEx has handed the package off to a third party for final delivery. 3. The
-								package delivery has been cancelled</xs:documentation>
+								package delivery has been cancelled
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="DestinationServiceArea" type="xs:string" minOccurs="0" />
@@ -270,7 +303,8 @@
 					</xs:element>
 					<xs:element name="OperatingCompany" type="ns:OperatingCompanyType" minOccurs="0">
 						<xs:annotation>
-							<xs:documentation>Identifies operating transportation company that is the specific to the carrier code.</xs:documentation>
+							<xs:documentation>Identifies operating transportation company that is the specific to the carrier code.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="OperatingCompanyOrCarrierDescription" type="xs:string" minOccurs="0">
@@ -281,7 +315,8 @@
 					<xs:element name="CartageAgentCompanyName" type="xs:string" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>If the package was interlined to a cartage agent, this is the name of the cartage agent.
-								(Returned for CSR SL only.)</xs:documentation>
+								(Returned for CSR SL only.)
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="ProductionLocationContactAndAddress" type="ns:ContactAndAddress" minOccurs="0">
@@ -327,14 +362,16 @@
 					</xs:element>
 					<xs:element name="PackagingType" type="ns:PackagingType" minOccurs="0">
 						<xs:annotation>
-							<xs:documentation>Strict representation of the Packaging type (e.g. FEDEX_BOX, YOUR_PACKAGING).</xs:documentation>
+							<xs:documentation>Strict representation of the Packaging type (e.g. FEDEX_BOX, YOUR_PACKAGING).
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="PhysicalPackagingType" type="ns:PhysicalPackagingType" minOccurs="0" />
 					<xs:element name="PackageSequenceNumber" type="xs:nonNegativeInteger" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>The sequence number of this package in a shipment. This would be 2 if it was package number 2
-								of 4.</xs:documentation>
+								of 4.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="PackageCount" type="xs:nonNegativeInteger" minOccurs="0">
@@ -345,7 +382,8 @@
 					<xs:element name="CreatorSoftwareId" type="xs:string" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>FOR FEDEX INTERNAL USE ONLY: Specifies the software id of the device that was used to create
-								this tracked shipment.</xs:documentation>
+								this tracked shipment.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="Charges" type="ns:TrackChargeDetail" minOccurs="0" maxOccurs="unbounded">
@@ -401,12 +439,14 @@
 					<xs:element name="DatesOrTimes" type="ns:TrackingDateOrTimestamp" minOccurs="0" maxOccurs="unbounded" />
 					<xs:element name="TotalTransitDistance" type="ns:Distance" minOccurs="0">
 						<xs:annotation>
-							<xs:documentation>The distance from the origin to the destination. Returned for Custom Critical shipments.</xs:documentation>
+							<xs:documentation>The distance from the origin to the destination. Returned for Custom Critical shipments.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="DistanceToDestination" type="ns:Distance" minOccurs="0">
 						<xs:annotation>
-							<xs:documentation>Total distance package still has to travel. Returned for Custom Critical shipments.</xs:documentation>
+							<xs:documentation>Total distance package still has to travel. Returned for Custom Critical shipments.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="SpecialInstructions" type="ns:TrackSpecialInstruction" minOccurs="0" maxOccurs="unbounded">
@@ -451,7 +491,8 @@
 						<xs:annotation>
 							<xs:documentation>Actual address where package was delivered. Differs from destinationAddress, which indicates
 								where the package was to be delivered; This field tells where delivery actually occurred (next door, at station,
-								etc.)</xs:documentation>
+								etc.)
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="OfficeOrderDeliveryMethod" type="ns:OfficeOrderDeliveryMethodType" minOccurs="0">
@@ -467,7 +508,8 @@
 					<xs:element name="DeliveryLocationDescription" type="xs:string" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>User/screen friendly representation of the DeliveryLocationType (delivery location at the
-								delivered to address). Can be returned in localized text.</xs:documentation>
+								delivered to address). Can be returned in localized text.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="DeliveryAttempts" type="xs:nonNegativeInteger" minOccurs="0">
@@ -478,19 +520,22 @@
 					<xs:element name="DeliverySignatureName" type="xs:string" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>This is either the name of the person that signed for the package or "Signature not requested"
-								or "Signature on file".</xs:documentation>
+								or "Signature on file".
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="PieceCountVerificationDetails" type="ns:PieceCountVerificationDetail" minOccurs="0"
 						maxOccurs="unbounded">
 						<xs:annotation>
 							<xs:documentation>Specifies the details about the count of the packages delivered at the delivery location and
-								the count of the packages at the origin.</xs:documentation>
+								the count of the packages at the origin.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="TotalUniqueAddressCountInConsolidation" type="xs:nonNegativeInteger" minOccurs="0">
 						<xs:annotation>
-							<xs:documentation>Specifies the total number of unique addresses on the CRNs in a consolidation.</xs:documentation>
+							<xs:documentation>Specifies the total number of unique addresses on the CRNs in a consolidation.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="AvailableImages" type="ns:AvailableImagesDetail" minOccurs="0" maxOccurs="unbounded" />
@@ -498,7 +543,8 @@
 					<xs:element name="NotificationEventsAvailable" type="ns:NotificationEventType" minOccurs="0" maxOccurs="unbounded" />
 					<xs:element name="SplitShipmentParts" type="ns:TrackSplitShipmentPart" minOccurs="0" maxOccurs="unbounded">
 						<xs:annotation>
-							<xs:documentation>Returned for cargo shipments only when they are currently split across vehicles.</xs:documentation>
+							<xs:documentation>Returned for cargo shipments only when they are currently split across vehicles.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="DeliveryOptionEligibilityDetails" type="ns:DeliveryOptionEligibilityDetail" minOccurs="0"
@@ -518,7 +564,8 @@
 			<xs:complexType name="StringBarcode">
 				<xs:annotation>
 					<xs:documentation>Each instance of this data type represents a barcode whose content must be represented as ASCII
-						text (i.e. not binary data).</xs:documentation>
+						text (i.e. not binary data).
+					</xs:documentation>
 				</xs:annotation>
 				<xs:sequence>
 					<xs:element name="Type" type="ns:StringBarcodeType" minOccurs="0">
@@ -536,7 +583,8 @@
 
 			<xs:complexType name="TrackStatusDetail">
 				<xs:annotation>
-					<xs:documentation>Specifies the details about the status of the track information for the shipments being tracked.</xs:documentation>
+					<xs:documentation>Specifies the details about the status of the track information for the shipments being tracked.
+					</xs:documentation>
 				</xs:annotation>
 				<xs:sequence>
 					<xs:element name="CreationTime" type="xs:dateTime" minOccurs="0" />
@@ -578,7 +626,8 @@
 			<xs:complexType name="TrackReconciliation">
 				<xs:annotation>
 					<xs:documentation>Used to report the status of a piece of a multiple piece shipment which is no longer traveling
-						with the rest of the packages in the shipment or has not been accounted for.</xs:documentation>
+						with the rest of the packages in the shipment or has not been accounted for.
+					</xs:documentation>
 				</xs:annotation>
 				<xs:sequence>
 					<xs:element name="Status" type="xs:string" minOccurs="1">
@@ -610,7 +659,8 @@
 
 			<xs:simpleType name="OperatingCompanyType">
 				<xs:annotation>
-					<xs:documentation>Identification for a FedEx operating company (transportation and non-transportation).</xs:documentation>
+					<xs:documentation>Identification for a FedEx operating company (transportation and non-transportation).
+					</xs:documentation>
 				</xs:annotation>
 				<xs:restriction base="xs:string">
 					<xs:enumeration value="FEDEX_CARGO" />
@@ -692,13 +742,15 @@
 				<xs:annotation>
 					<xs:documentation>Descriptive data for a physical location. May be used as an actual physical address (place to
 						which one could go), or as a container of "address parts" which should be handled as a unit (such as a
-						city-state-ZIP combination within the US).</xs:documentation>
+						city-state-ZIP combination within the US).
+					</xs:documentation>
 				</xs:annotation>
 				<xs:sequence>
 					<xs:element name="StreetLines" type="xs:string" minOccurs="0" maxOccurs="unbounded">
 						<xs:annotation>
 							<xs:documentation>Combination of number, street name, etc. At least one line is required for a valid physical
-								address; empty lines should not be included.</xs:documentation>
+								address; empty lines should not be included.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="City" type="xs:string" minOccurs="0">
@@ -709,13 +761,15 @@
 					<xs:element name="StateOrProvinceCode" type="xs:string" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>Identifying abbreviation for US state, Canada province, etc. Format and presence of this field
-								will vary, depending on country.</xs:documentation>
+								will vary, depending on country.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="PostalCode" type="xs:string" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>Identification of a region (usually small) for mail/package delivery. Format and presence of
-								this field will vary, depending on country.</xs:documentation>
+								this field will vary, depending on country.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="UrbanizationCode" type="xs:string" minOccurs="0">
@@ -752,13 +806,15 @@
 			<xs:complexType name="TrackPackageIdentifier">
 				<xs:annotation>
 					<xs:documentation>The type and value of the package identifier that is to be used to retrieve the tracking
-						information for a package.</xs:documentation>
+						information for a package.
+					</xs:documentation>
 				</xs:annotation>
 				<xs:sequence>
 					<xs:element name="Type" type="ns:TrackIdentifierType" minOccurs="1">
 						<xs:annotation>
 							<xs:documentation>The type of the Value to be used to retrieve tracking information for a package (e.g.
-								SHIPPER_REFERENCE, PURCHASE_ORDER, TRACKING_NUMBER_OR_DOORTAG, etc..) .</xs:documentation>
+								SHIPPER_REFERENCE, PURCHASE_ORDER, TRACKING_NUMBER_OR_DOORTAG, etc..) .
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="Value" type="xs:string" minOccurs="1">
@@ -775,7 +831,8 @@
 					<xs:element name="Description" type="xs:string" minOccurs="0" />
 					<xs:element name="ShortDescription" type="xs:string" minOccurs="0">
 						<xs:annotation>
-							<xs:documentation>Specifies a shorter description for the service that is calculated per the service code.</xs:documentation>
+							<xs:documentation>Specifies a shorter description for the service that is calculated per the service code.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 				</xs:sequence>
@@ -890,7 +947,8 @@
 				<xs:annotation>
 					<xs:documentation>This enumeration rationalizes the former FedEx Express international "admissibility package"
 						types (based on ANSI X.12) and the FedEx Freight packaging types. The values represented are those common to both
-						carriers.</xs:documentation>
+						carriers.
+					</xs:documentation>
 				</xs:annotation>
 				<xs:restriction base="xs:string">
 					<xs:enumeration value="BAG" />
@@ -959,7 +1017,8 @@
 				<xs:sequence>
 					<xs:element name="CommodityId" type="xs:string" minOccurs="0">
 						<xs:annotation>
-							<xs:documentation>Value used to identify a commodity description; must be unique within the containing shipment.</xs:documentation>
+							<xs:documentation>Value used to identify a commodity description; must be unique within the containing shipment.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="Name" type="xs:string" minOccurs="0" />
@@ -974,14 +1033,16 @@
 					<xs:element name="AdditionalMeasures" type="ns:Measure" minOccurs="0" maxOccurs="unbounded">
 						<xs:annotation>
 							<xs:documentation>Contains only additional quantitative information other than weight and quantity to calculate
-								duties and taxes.</xs:documentation>
+								duties and taxes.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="UnitPrice" type="ns:Money" minOccurs="0" />
 					<xs:element name="CustomsValue" type="ns:Money" minOccurs="0" />
 					<xs:element name="ExciseConditions" type="ns:EdtExciseCondition" minOccurs="0" maxOccurs="unbounded">
 						<xs:annotation>
-							<xs:documentation>Defines additional characteristic of commodity used to calculate duties and taxes</xs:documentation>
+							<xs:documentation>Defines additional characteristic of commodity used to calculate duties and taxes
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="ExportLicenseNumber" type="xs:string" minOccurs="0" />
@@ -1032,7 +1093,8 @@
 					<xs:element name="ProducerId" type="xs:string" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>Identification of which producer is associated with this commodity (if multiple producers are
-								used in a single shipment).</xs:documentation>
+								used in a single shipment).
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="NetCostMethod" type="ns:NaftaNetCostMethodCode" minOccurs="0" />
@@ -1050,7 +1112,8 @@
 					<xs:element name="Value" type="xs:string" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>Customer-declared value, with data type and legal values depending on excise condition, used in
-								defining the taxable value of the item.</xs:documentation>
+								defining the taxable value of the item.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 				</xs:sequence>
@@ -1062,7 +1125,8 @@
 					<xs:element name="Description" type="xs:string" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>Specifies additional description about customs options. This is a required field when the
-								customs options type is "OTHER".</xs:documentation>
+								customs options type is "OTHER".
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 				</xs:sequence>
@@ -1291,7 +1355,8 @@
 
 			<xs:complexType name="Distance">
 				<xs:annotation>
-					<xs:documentation>Driving or other transportation distances, distinct from dimension measurements.</xs:documentation>
+					<xs:documentation>Driving or other transportation distances, distinct from dimension measurements.
+					</xs:documentation>
 				</xs:annotation>
 				<xs:sequence>
 					<xs:element name="Value" type="xs:decimal" minOccurs="0">
@@ -1319,13 +1384,15 @@
 					<xs:element name="DeliveryOption" type="ns:TrackDeliveryOptionType" minOccurs="0" />
 					<xs:element name="StatusDetail" type="ns:SpecialInstructionStatusDetail" minOccurs="0">
 						<xs:annotation>
-							<xs:documentation>Specifies the status and status update time of the track special instructions.</xs:documentation>
+							<xs:documentation>Specifies the status and status update time of the track special instructions.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="OriginalEstimatedDeliveryTimestamp" type="xs:dateTime" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>Specifies the estimated delivery time that was originally estimated when the shipment was
-								shipped.</xs:documentation>
+								shipped.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="OriginalRequestTime" type="xs:dateTime" minOccurs="0">
@@ -1401,7 +1468,8 @@
 				<xs:sequence>
 					<xs:element name="Type" type="ns:AppointmentWindowType" minOccurs="0">
 						<xs:annotation>
-							<xs:documentation>The description that FedEx Ground uses for the appointment window being specified.</xs:documentation>
+							<xs:documentation>The description that FedEx Ground uses for the appointment window being specified.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="Window" type="ns:LocalTimeRange" minOccurs="0">
@@ -1540,7 +1608,8 @@
 			<xs:complexType name="TrackSplitShipmentPart">
 				<xs:annotation>
 					<xs:documentation>Used when a cargo shipment is split across vehicles. This is used to give the status of each part
-						of the shipment.</xs:documentation>
+						of the shipment.
+					</xs:documentation>
 				</xs:annotation>
 				<xs:sequence>
 					<xs:element name="PieceCount" type="xs:positiveInteger" minOccurs="0">
@@ -1630,7 +1699,8 @@
 					<xs:element name="StatusExceptionCode" type="xs:string" minOccurs="0">
 						<xs:annotation>
 							<xs:documentation>Further defines the Scan Type code's specific type (e.g., DEX08 business closed). Pairs with
-								StatusExceptionDescription.</xs:documentation>
+								StatusExceptionDescription.
+							</xs:documentation>
 						</xs:annotation>
 					</xs:element>
 					<xs:element name="StatusExceptionDescription" type="xs:string" minOccurs="0">
