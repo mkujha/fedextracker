@@ -15,8 +15,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.demo.client.FedexTrackerClient;
+import com.demo.client.UpdatedStatus;
+import com.demo.client.WriteEventLogDomain;
 import com.demo.domain.WriteEventLog;
-import com.demo.domain.WriteEventLogRequest;
 import com.demo.fedex.domain.Address;
 import com.demo.fedex.domain.CompletedTrackDetail;
 import com.demo.fedex.domain.CustomerExceptionRequestDetail;
@@ -37,6 +38,7 @@ public class ScheduledTasks {
 
 	@Autowired
 	FedexTrackerClient fedexTrackerClient;
+
 	@Autowired
 	@Resource(name = "demoDao")
 	private DBConnector dbConnector;
@@ -45,63 +47,73 @@ public class ScheduledTasks {
 
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
-	@Scheduled(fixedRate = 50000000)
+	@Scheduled(fixedRate = 5000)
 	// @Scheduled(cron="0 0 8-10 * * *")
-	public void reportCurrentTime() throws SQLException {
+	public void callFedEx() throws SQLException {
 		log.info("The time is now {}", dateFormat.format(new Date()));
 		WriteEventLog eventLog = new WriteEventLog();
-		WriteEventLogRequest eventLogRequest = dbConnector.getWriteEventLog();
-		eventLog.setRequest(eventLogRequest);
-		
-		TrackReply reply = fedexTrackerClient.trackFedEx(fedexTrackerClient.createRequest(eventLogRequest));
-		log.info(" DB value" + reply);
-		//
-		if (printNotifications(reply.getNotifications())) {
-			printCompletedTrackDetail(reply.getCompletedTrackDetails());
-		}
-		if (reply.getCompletedTrackDetails() != null) {
-			printCompletedTrackDetail(reply.getCompletedTrackDetails());
-		}
-		if (isResponseOk(reply.getHighestSeverity())) // check if the call was
-														// successful
-		{
-			System.out.println("--Track Reply--");
+		WriteEventLogDomain eventLogDomain = dbConnector.getWriteEventLog();
+		if (eventLogDomain.getTrackingNumber() != null) {
+			TrackReply reply = fedexTrackerClient.trackFedEx(fedexTrackerClient.createRequest(eventLogDomain));
+			log.info(" DB value" + reply);
+			//
+			if (reply != null) {
+				UpdatedStatus status = new UpdatedStatus();
+
+				if (printNotifications(reply.getNotifications())) {
+					printCompletedTrackDetail(reply.getCompletedTrackDetails(), status);
+					dbConnector.manageEvent(status, eventLogDomain);
+				}
+				if (reply.getCompletedTrackDetails() != null) {
+					printCompletedTrackDetail(reply.getCompletedTrackDetails(), status);
+				}
+				if (isResponseOk(reply.getHighestSeverity())) {
+					log.info("--Track Reply--");
+				}
+			}
 		}
 	}
 
-	private void printCompletedTrackDetail(List<CompletedTrackDetail> ctd) {
+	private void printCompletedTrackDetail(List<CompletedTrackDetail> ctd, UpdatedStatus status) {
 		for (int i = 0; i < ctd.size(); i++) { // package detail information
+			if (status.getUpdatedStatus() != null && status.getUpdatedStatus().equalsIgnoreCase("DL")) {
+				break;
+			}
 			boolean cont = true;
-			System.out.println("--Completed Tracking Detail--");
+			log.info("--Completed Tracking Detail--");
 			if (ctd.get(i).getNotifications() != null) {
-				System.out.println("  Completed Track Detail Notifications--");
+				log.info("  Completed Track Detail Notifications--");
 				cont = printNotifications(ctd.get(i).getNotifications());
-				System.out.println("  Completed Track Detail Notifications--");
+				log.info("  Completed Track Detail Notifications--");
 			}
 			if (cont) {
 				print("DuplicateWayBill", ctd.get(i).isDuplicateWaybill());
 				print("Track Details Count", ctd.get(i).getTrackDetailsCount());
 				if (ctd.get(i).isMoreData()) {
-					System.out.println("  Additional package data not yet retrieved");
+					log.info("  Additional package data not yet retrieved");
 					if (ctd.get(i).getPagingToken() != null) {
 						print("  Paging Token", ctd.get(i).getPagingToken());
 					}
 				}
-				printTrackDetail(ctd.get(i).getTrackDetails());
+				printTrackDetail(ctd.get(i).getTrackDetails(), status);
 			}
-			System.out.println("--Completed Tracking Detail--");
-			System.out.println();
+			log.info("--Completed Tracking Detail--");
+
 		}
 	}
 
-	private void printTrackDetail(List<TrackDetail> td) {
+	private void printTrackDetail(List<TrackDetail> td, UpdatedStatus status) {
+
 		for (int i = 0; i < td.size(); i++) {
 			boolean cont = true;
-			System.out.println("--Track Details--");
+			if (status.getUpdatedStatus() != null && status.getUpdatedStatus().equalsIgnoreCase("DL")) {
+				break;
+			}
+			log.info("--Track Details--");
 			if (td.get(i).getNotification() != null) {
-				System.out.println("  Track Detail Notification--");
+				log.info("  Track Detail Notification--");
 				cont = printNotifications(td.get(i).getNotification());
-				System.out.println("  Track Detail Notification--");
+				log.info("  Track Detail Notification--");
 			}
 			if (cont) {
 				print("Tracking Number", td.get(i).getTrackingNumber());
@@ -114,39 +126,39 @@ public class ScheduledTasks {
 				}
 
 				if (td.get(i).getStatusDetail() != null) {
-					System.out.println("--Status Details--");
+					log.info("--Status Details--");
 					printStatusDetail(td.get(i).getStatusDetail());
-					System.out.println("--Status Details--");
+					log.info("--Status Details--");
 				}
 				if (td.get(i).getOriginLocationAddress() != null) {
-					System.out.println("--Origin Location--");
+					log.info("--Origin Location--");
 					print(td.get(i).getOriginLocationAddress());
-					System.out.println("--Origin Location--");
+					log.info("--Origin Location--");
 				}
 				if (td.get(i).getDestinationAddress() != null) {
-					System.out.println("--Destination Location--");
+					log.info("--Destination Location--");
 					printDestinationInformation(td.get(i));
-					System.out.println("--Destination Location--");
+					log.info("--Destination Location--");
 				}
 				if (td.get(i).getActualDeliveryAddress() != null) {
-					System.out.println("--Delivery Address--");
+					log.info("--Delivery Address--");
 					print(td.get(i).getActualDeliveryAddress());
-					System.out.println("--Delivery Address--");
+					log.info("--Delivery Address--");
 				}
 
 				if (td.get(i).getDeliveryAttempts().shortValue() > 0) {
-					System.out.println("--Delivery Information--");
+					log.info("--Delivery Information--");
 					printDeliveryInformation(td.get(i));
-					System.out.println("--Delivery Information--");
+					log.info("--Delivery Information--");
 				}
 
 				if (td.get(i).getEvents() != null) {
-					System.out.println("--Tracking Events--");
-					printTrackEvents(td.get(i).getEvents());
-					System.out.println("--Tracking Events--");
+					log.info("--Tracking Events--");
+					printTrackEvents(td.get(i).getEvents(), status);
+					log.info("--Tracking Events--");
 				}
-				System.out.println("--Track Details--");
-				System.out.println();
+				log.info("--Track Details--");
+
 			}
 		}
 	}
@@ -159,33 +171,40 @@ public class ScheduledTasks {
 				print("Excpetion Status Code", exception.getStatusCode());
 				print("Excpetion Status Description", exception.getStatusDescription());
 				if (exception.getCreateTime() != null) {
-					System.out.println("  Customer Exception Date--");
+					log.info("  Customer Exception Date--");
 					print(exception.getCreateTime());
-					System.out.println("  Customer Exception Date--");
+					log.info("  Customer Exception Date--");
 				}
 			}
 		}
 	}
 
-	private void printTrackEvents(List<TrackEvent> events) {
+	private void printTrackEvents(List<TrackEvent> events, UpdatedStatus status) {
+
 		if (events != null) {
 			for (int i = 0; i < events.size(); i++) {
 				TrackEvent event = events.get(i);
 				print("Event no. ", i);
 				print(event.getTimestamp());
-				if (event.getEventType() != null) {
-					print("Type", event.getEventType());
-				}
+
 				print("Station Id", event.getStationId());
 				print("Exception Code", event.getStatusExceptionCode());
 				print("", event.getStatusExceptionDescription());
+				status.setStatusExceptionDescription(event.getStatusExceptionDescription());
 				print("Description", event.getEventDescription());
+				status.setDescription(event.getEventDescription());
+
 				if (event.getAddress() != null) {
-					System.out.println("  Event Address--");
+					log.info("  Event Address--");
 					print(event.getAddress());
-					System.out.println("  Event Address--");
+					log.info("  Event Address--");
 				}
-				System.out.println();
+				if (event.getEventType() != null && event.getEventType().equalsIgnoreCase("DL")) {
+					status.setUpdatedStatus(event.getEventType());
+					break;
+				}
+				status.setUpdatedStatus(event.getEventType());
+				print("Type", event.getEventType());
 			}
 		}
 	}
@@ -195,14 +214,15 @@ public class ScheduledTasks {
 			print(tsd.getCreationTime());
 			print("Code", tsd.getCode());
 			if (tsd.getLocation() != null) {
-				System.out.println("--Location Address Detail--");
+				log.info("--Location Address Detail--");
 				print(tsd.getLocation());
-				System.out.println("--Location Address Detail--");
+				log.info("--Location Address Detail--");
 			}
 			if (tsd.getAncillaryDetails() != null) {
-				System.out.println("--Ancillary Details--");
+				log.info("--Ancillary Details--");
+				// TODO complete details
 				printAncillaryDetails(tsd.getAncillaryDetails());
-				System.out.println("--Ancillary Details--");
+				log.info("--Ancillary Details--");
 			}
 		}
 	}
@@ -240,11 +260,11 @@ public class ScheduledTasks {
 	}
 
 	private void printDeliveryInformation(TrackDetail td) {
-		System.out.println("Delivery attempts: " + td.getDeliveryAttempts());
+		log.info("Delivery attempts: " + td.getDeliveryAttempts());
 		print("Delivery Location", td.getDeliveryLocationDescription());
 		print("Delivery Signature", td.getDeliverySignatureName());
 		if (td.getDeliveryOptionEligibilityDetails() != null) {
-			System.out.println("Delivery Options");
+			log.info("Delivery Options");
 			printDeliveryOptionEligibility(td.getDeliveryOptionEligibilityDetails());
 		}
 	}
@@ -347,7 +367,7 @@ public class ScheduledTasks {
 			if (n instanceof List) {
 				notifications = (List<Notification>) n;
 				if (notifications == null || notifications.size() == 0) {
-					System.out.println("  No notifications returned");
+					log.info("  No notifications returned");
 				}
 				for (int i = 0; i < notifications.size(); i++) {
 					printNotification(notifications.get(i));
@@ -369,7 +389,7 @@ public class ScheduledTasks {
 
 	private void printNotification(Notification notification) {
 		if (notification == null) {
-			System.out.println("null");
+			log.info("null");
 		}
 		NotificationSeverityType nst = notification.getSeverity();
 
@@ -407,19 +427,19 @@ public class ScheduledTasks {
 		} else {
 			value = v.toString();
 		}
-		System.out.println("  " + key + ": " + value);
+		log.info("  " + key + ": " + value);
 	}
 
 	private void print(Object o) {
 		if (o != null) {
 			if (o instanceof String) {
-				System.out.println((String) o);
+				log.info((String) o);
 			} else if (o instanceof Address) {
 				printAddress((Address) o);
 			} else if (o instanceof Calendar) {
 				printTime((Calendar) o);
 			} else {
-				System.out.println(o.toString());
+				log.info(o.toString());
 			}
 
 		}
@@ -429,7 +449,7 @@ public class ScheduledTasks {
 		if (msg == null || weight == null) {
 			return;
 		}
-		System.out.println(msg + ": " + weight.getValue() + " " + weight.getUnits());
+		log.info(msg + ": " + weight.getValue() + " " + weight.getUnits());
 	}
 
 	private String getSystemProperty(String property) {

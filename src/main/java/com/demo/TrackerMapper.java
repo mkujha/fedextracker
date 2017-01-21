@@ -80,8 +80,7 @@ public interface TrackerMapper {
 
 	TrackInformationNoteDetail map(com.demo.fedex.domain.TrackInformationNoteDetail value);
 
-	List<CustomerExceptionRequestDetail> map5(
-			List<com.demo.fedex.domain.CustomerExceptionRequestDetail> value);
+	List<CustomerExceptionRequestDetail> map5(List<com.demo.fedex.domain.CustomerExceptionRequestDetail> value);
 
 	CustomerExceptionRequestDetail map(com.demo.fedex.domain.CustomerExceptionRequestDetail value);
 
@@ -163,8 +162,7 @@ public interface TrackerMapper {
 
 	TrackDeliveryLocationType map(com.demo.fedex.domain.TrackDeliveryLocationType value);
 
-	List<PieceCountVerificationDetail> map17(
-			List<com.demo.fedex.domain.PieceCountVerificationDetail> value);
+	List<PieceCountVerificationDetail> map17(List<com.demo.fedex.domain.PieceCountVerificationDetail> value);
 
 	PieceCountVerificationDetail map(com.demo.fedex.domain.PieceCountVerificationDetail value);
 
@@ -184,63 +182,114 @@ public interface TrackerMapper {
 
 	DeliveryOptionEligibilityDetail map(com.demo.fedex.domain.DeliveryOptionEligibilityDetail value);
 
-	List<DeliveryOptionEligibilityDetail> map21(
-			List<com.demo.fedex.domain.DeliveryOptionEligibilityDetail> value);
+	List<DeliveryOptionEligibilityDetail> map21(List<com.demo.fedex.domain.DeliveryOptionEligibilityDetail> value);
 
 	List<TrackEvent> map22(List<com.demo.fedex.domain.TrackEvent> value);
 
 	TrackEvent map(com.demo.fedex.domain.TrackEvent value);
 
-	java.util.List<com.demo.domain.NotificationParameter> map23(java.util.List<com.demo.fedex.domain.NotificationParameter> value);
+	java.util.List<com.demo.domain.NotificationParameter> map23(
+			java.util.List<com.demo.fedex.domain.NotificationParameter> value);
+
 	com.demo.domain.Localization map(com.demo.fedex.domain.Localization value);
+
 	com.demo.domain.StringBarcode map(com.demo.fedex.domain.StringBarcode value);
-	java.util.List<com.demo.domain.TrackStatusAncillaryDetail> map24(java.util.List<com.demo.fedex.domain.TrackStatusAncillaryDetail> value);
+
+	java.util.List<com.demo.domain.TrackStatusAncillaryDetail> map24(
+			java.util.List<com.demo.fedex.domain.TrackStatusAncillaryDetail> value);
+
 	com.demo.domain.TrackPackageIdentifier map(com.demo.fedex.domain.TrackPackageIdentifier value);
+
 	com.demo.domain.ServiceType map(com.demo.fedex.domain.ServiceType value);
+
 	com.demo.domain.WeightUnits map(com.demo.fedex.domain.WeightUnits value);
+
 	com.demo.domain.LinearUnits map(com.demo.fedex.domain.LinearUnits value);
+
 	com.demo.domain.TrackChargeDetailType map(com.demo.fedex.domain.TrackChargeDetailType value);
+
 	com.demo.domain.TrackDetailAttributeType map(com.demo.fedex.domain.TrackDetailAttributeType value);
+
 	com.demo.domain.TrackReturnMovementStatusType map(com.demo.fedex.domain.TrackReturnMovementStatusType value);
+
 	com.demo.domain.CommodityPurposeType map(com.demo.fedex.domain.CommodityPurposeType value);
+
 	com.demo.domain.CustomsOptionType map(com.demo.fedex.domain.CustomsOptionType value);
-	com.demo.domain.TrackAdvanceNotificationStatusType map(com.demo.fedex.domain.TrackAdvanceNotificationStatusType value);
+
+	com.demo.domain.TrackAdvanceNotificationStatusType map(
+			com.demo.fedex.domain.TrackAdvanceNotificationStatusType value);
+
 	com.demo.domain.TrackSpecialHandlingType map(com.demo.fedex.domain.TrackSpecialHandlingType value);
+
 	com.demo.domain.Money map(com.demo.fedex.domain.Money value);
+
 	com.demo.domain.TrackReturnLabelType map(com.demo.fedex.domain.TrackReturnLabelType value);
+
 	com.demo.domain.TrackPaymentType map(com.demo.fedex.domain.TrackPaymentType value);
-	com.demo.domain.TrackChargesPaymentClassificationType map(com.demo.fedex.domain.TrackChargesPaymentClassificationType value);
+
+	com.demo.domain.TrackChargesPaymentClassificationType map(
+			com.demo.fedex.domain.TrackChargesPaymentClassificationType value);
+
 	com.demo.domain.TrackingDateOrTimestampType map(com.demo.fedex.domain.TrackingDateOrTimestampType value);
+
 	com.demo.domain.DistanceUnits map(com.demo.fedex.domain.DistanceUnits value);
+
 	com.demo.domain.TrackDeliveryOptionType map(com.demo.fedex.domain.TrackDeliveryOptionType value);
+
 	com.demo.domain.PieceCountLocationType map(com.demo.fedex.domain.PieceCountLocationType value);
+
 	com.demo.domain.AvailableImageType map(com.demo.fedex.domain.AvailableImageType value);
+
 	com.demo.domain.DeliveryOptionType map(com.demo.fedex.domain.DeliveryOptionType value);
+
 	com.demo.domain.ArrivalLocationType map(com.demo.fedex.domain.ArrivalLocationType value);
+
 	com.demo.domain.NotificationParameter map(com.demo.fedex.domain.NotificationParameter value);
+
 	com.demo.domain.StringBarcodeType map(com.demo.fedex.domain.StringBarcodeType value);
+
 	com.demo.domain.TrackStatusAncillaryDetail map(com.demo.fedex.domain.TrackStatusAncillaryDetail value);
+
 	com.demo.domain.TrackIdentifierType map(com.demo.fedex.domain.TrackIdentifierType value);
+
 	com.demo.domain.NaftaCommodityDetail map(com.demo.fedex.domain.NaftaCommodityDetail value);
+
 	com.demo.domain.SpecialInstructionStatusDetail map(com.demo.fedex.domain.SpecialInstructionStatusDetail value);
+
 	com.demo.domain.ImageSizeType map(com.demo.fedex.domain.ImageSizeType value);
+
 	com.demo.domain.EligibilityType map(com.demo.fedex.domain.EligibilityType value);
+
 	java.util.List<com.demo.domain.Measure> map27(java.util.List<com.demo.fedex.domain.Measure> value);
+
 	com.demo.domain.Measure map(com.demo.fedex.domain.Measure value);
+
 	com.demo.domain.AppointmentDetail map(com.demo.fedex.domain.AppointmentDetail value);
+
 	com.demo.domain.NaftaPreferenceCriterionCode map(com.demo.fedex.domain.NaftaPreferenceCriterionCode value);
+
 	com.demo.domain.SpecialInstructionsStatusCode map(com.demo.fedex.domain.SpecialInstructionsStatusCode value);
-	java.util.List<com.demo.domain.EdtExciseCondition> map28(java.util.List<com.demo.fedex.domain.EdtExciseCondition> value);
+
+	java.util.List<com.demo.domain.EdtExciseCondition> map28(
+			java.util.List<com.demo.fedex.domain.EdtExciseCondition> value);
+
 	com.demo.domain.EdtExciseCondition map(com.demo.fedex.domain.EdtExciseCondition value);
+
 	com.demo.domain.NaftaProducerDeterminationCode map(com.demo.fedex.domain.NaftaProducerDeterminationCode value);
-	java.util.List<com.demo.domain.AppointmentTimeDetail> map29(java.util.List<com.demo.fedex.domain.AppointmentTimeDetail> value);
+
+	java.util.List<com.demo.domain.AppointmentTimeDetail> map29(
+			java.util.List<com.demo.fedex.domain.AppointmentTimeDetail> value);
+
 	com.demo.domain.AppointmentTimeDetail map(com.demo.fedex.domain.AppointmentTimeDetail value);
+
 	com.demo.domain.NaftaNetCostMethodCode map(com.demo.fedex.domain.NaftaNetCostMethodCode value);
+
 	com.demo.domain.AppointmentWindowType map(com.demo.fedex.domain.AppointmentWindowType value);
+
 	com.demo.domain.DateRange map(com.demo.fedex.domain.DateRange value);
+
 	com.demo.domain.LocalTimeRange map(com.demo.fedex.domain.LocalTimeRange value);
 
 	WriteEventLogResponse map(TrackReply reply);
-	
-	
+
 }
