@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -14,32 +16,30 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
 import com.demo.client.WriteEventLogDomain;
-import com.demo.domain.WriteEventLogRequest;
 
-public class WriteEventLogExtractor implements ResultSetExtractor<WriteEventLogDomain> {
+public class WriteEventLogExtractor implements ResultSetExtractor<List<WriteEventLogDomain>> {
 
 	@Override
-	public WriteEventLogDomain extractData(ResultSet rs) throws SQLException, DataAccessException {
-		WriteEventLogDomain writeEventLogRequest = new WriteEventLogDomain();
-		String trackingNo ="";
+	public List<WriteEventLogDomain> extractData(ResultSet rs) throws SQLException, DataAccessException {
+		ArrayList<WriteEventLogDomain> listOfEvent = new ArrayList<WriteEventLogDomain>();
 		while (rs.next()) {
-			writeEventLogRequest.setEventArrivalLocation(rs.getString("EVENTARRIVALLOCATION"));
-			writeEventLogRequest.setEventCity(rs.getString("EVENTCITY"));
-			writeEventLogRequest.setEventCountry(rs.getString("EVENTCOUNTRY"));
-			writeEventLogRequest.setEventDate(getXMLGregorianCalendar(rs.getTimestamp(("EVENTDATE"))));
-			writeEventLogRequest.setEventDescription(rs.getString("EVENTDESCRIPTION"));
+			WriteEventLogDomain writeEventLog = new WriteEventLogDomain();
+			writeEventLog.setEventArrivalLocation(rs.getString("EVENTARRIVALLOCATION"));
+			writeEventLog.setEventCity(rs.getString("EVENTCITY"));
+			writeEventLog.setEventCountry(rs.getString("EVENTCOUNTRY"));
+			writeEventLog.setEventDate(getXMLGregorianCalendar(rs.getTimestamp(("EVENTDATE"))));
+			writeEventLog.setEventDescription(rs.getString("EVENTDESCRIPTION"));
 			// STATUS
-			writeEventLogRequest.setInvoiceNo(rs.getString("INVOICE_NO"));
-			writeEventLogRequest.setEventZip(rs.getString("EVENTZIP"));
-			writeEventLogRequest.setEventState(rs.getString("EVENTSTATE"));
-			writeEventLogRequest.setEventType(rs.getString("EVENTTYPE"));
-			trackingNo = trackingNo +"," + rs.getString("TRACKING_NUMBER");
-			writeEventLogRequest.setTrackingNumber(trackingNo.substring(1,trackingNo.length()));
-			writeEventLogRequest.setEventStatusExceptionCode(rs.getString("EVENTSTATUSEXCEPTIONCODE"));
-			writeEventLogRequest.setStatus(rs.getString("EVENTSTATUSEXCEPTIONCODE"));
-			
+			writeEventLog.setInvoiceNo(rs.getString("INVOICE_NO"));
+			writeEventLog.setEventZip(rs.getString("EVENTZIP"));
+			writeEventLog.setEventState(rs.getString("EVENTSTATE"));
+			writeEventLog.setEventType(rs.getString("EVENTTYPE"));
+			writeEventLog.setTrackingNumber(rs.getString("TRACKING_NUMBER"));
+			writeEventLog.setEventStatusExceptionCode(rs.getString("EVENTSTATUSEXCEPTIONCODE"));
+			writeEventLog.setStatus(rs.getString("EVENTSTATUSEXCEPTIONCODE"));
+			listOfEvent.add(writeEventLog);
 		}
-		return writeEventLogRequest;
+		return listOfEvent;
 	}
 
 	private XMLGregorianCalendar getXMLGregorianCalendar(Timestamp ts) {

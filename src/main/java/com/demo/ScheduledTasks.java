@@ -15,7 +15,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.demo.client.FedexTrackerClient;
-import com.demo.client.UpdatedStatus;
 import com.demo.client.WriteEventLogDomain;
 import com.demo.domain.WriteEventLog;
 import com.demo.fedex.domain.Address;
@@ -52,31 +51,34 @@ public class ScheduledTasks {
 	public void callFedEx() throws SQLException {
 		log.info("The time is now {}", dateFormat.format(new Date()));
 		WriteEventLog eventLog = new WriteEventLog();
-		WriteEventLogDomain eventLogDomain = dbConnector.getWriteEventLog();
-		if (eventLogDomain.getTrackingNumber() != null) {
-			TrackReply reply = fedexTrackerClient.trackFedEx(fedexTrackerClient.createRequest(eventLogDomain));
-			log.info(" DB value" + reply);
-			//
-			if (reply != null) {
-				UpdatedStatus status = new UpdatedStatus();
+		List<WriteEventLogDomain> events = dbConnector.getWriteEventLog();
+		if (!events.isEmpty()) {
+			for (WriteEventLogDomain eventLogDomain : events)
+				if (eventLogDomain.getTrackingNumber() != null) {
+					TrackReply reply = fedexTrackerClient.trackFedEx(fedexTrackerClient.createRequest(eventLogDomain));
+					log.info(" DB value" + reply);
+					//
+					if (reply != null) {
+						WriteEventLogDomain status = new WriteEventLogDomain();
 
-				if (printNotifications(reply.getNotifications())) {
-					printCompletedTrackDetail(reply.getCompletedTrackDetails(), status);
-					dbConnector.manageEvent(status, eventLogDomain);
+						if (printNotifications(reply.getNotifications())) {
+							printCompletedTrackDetail(reply.getCompletedTrackDetails(), status);
+							dbConnector.manageEvent(status, eventLogDomain);
+						}
+						if (reply.getCompletedTrackDetails() != null) {
+							printCompletedTrackDetail(reply.getCompletedTrackDetails(), status);
+						}
+						if (isResponseOk(reply.getHighestSeverity())) {
+							log.info("--Track Reply--");
+						}
+					}
 				}
-				if (reply.getCompletedTrackDetails() != null) {
-					printCompletedTrackDetail(reply.getCompletedTrackDetails(), status);
-				}
-				if (isResponseOk(reply.getHighestSeverity())) {
-					log.info("--Track Reply--");
-				}
-			}
 		}
 	}
 
-	private void printCompletedTrackDetail(List<CompletedTrackDetail> ctd, UpdatedStatus status) {
+	private void printCompletedTrackDetail(List<CompletedTrackDetail> ctd, WriteEventLogDomain status) {
 		for (int i = 0; i < ctd.size(); i++) { // package detail information
-			if (status.getUpdatedStatus() != null && status.getUpdatedStatus().equalsIgnoreCase("DL")) {
+			if (status.getEventType() != null && status.getEventType().equalsIgnoreCase("DL")) {
 				break;
 			}
 			boolean cont = true;
@@ -102,11 +104,11 @@ public class ScheduledTasks {
 		}
 	}
 
-	private void printTrackDetail(List<TrackDetail> td, UpdatedStatus status) {
+	private void printTrackDetail(List<TrackDetail> td, WriteEventLogDomain status) {
 
 		for (int i = 0; i < td.size(); i++) {
 			boolean cont = true;
-			if (status.getUpdatedStatus() != null && status.getUpdatedStatus().equalsIgnoreCase("DL")) {
+			if (status.getEventType() != null && status.getEventType().equalsIgnoreCase("DL")) {
 				break;
 			}
 			log.info("--Track Details--");
@@ -179,8 +181,7 @@ public class ScheduledTasks {
 		}
 	}
 
-	private void printTrackEvents(List<TrackEvent> events, UpdatedStatus status) {
-
+	private void printTrackEvents(List<TrackEvent> events, WriteEventLogDomain status) {
 		if (events != null) {
 			for (int i = 0; i < events.size(); i++) {
 				TrackEvent event = events.get(i);
@@ -189,24 +190,44 @@ public class ScheduledTasks {
 
 				print("Station Id", event.getStationId());
 				print("Exception Code", event.getStatusExceptionCode());
+				status.setEventStatusExceptionCode(event.getStatusExceptionCode());
 				print("", event.getStatusExceptionDescription());
 				status.setStatusExceptionDescription(event.getStatusExceptionDescription());
 				print("Description", event.getEventDescription());
-				status.setDescription(event.getEventDescription());
+				status.setEventDescription(event.getEventDescription());
 
 				if (event.getAddress() != null) {
 					log.info("  Event Address--");
-					print(event.getAddress());
+					printAddress(event.getAddress(), status);
 					log.info("  Event Address--");
 				}
 				if (event.getEventType() != null && event.getEventType().equalsIgnoreCase("DL")) {
-					status.setUpdatedStatus(event.getEventType());
+					status.setEventType(event.getEventType());
 					break;
 				}
-				status.setUpdatedStatus(event.getEventType());
+				status.setEventType(event.getEventType());
 				print("Type", event.getEventType());
 			}
 		}
+	}
+
+	private void printAddress(Address address, WriteEventLogDomain status) {
+		if (address.getStreetLines() != null) {
+			List<String> streetLines = address.getStreetLines();
+			String street = "";
+			for (int i = 0; i < streetLines.size(); i++) {
+				if (streetLines.get(i) != null) {
+					print("Street", streetLines.get(i));
+					street = street + " " + streetLines.get(i);
+					status.setEventArrivalLocation(street);
+				}
+			}
+		}
+		status.setEventCity(address.getCity());
+		status.setEventZip(address.getPostalCode());
+		status.setEventCountry(address.getCountryCode());
+		status.setEventState(address.getStateOrProvinceCode());
+
 	}
 
 	private void printStatusDetail(TrackStatusDetail tsd) {
