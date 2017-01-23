@@ -1,6 +1,7 @@
 package com.demo.util;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -34,10 +35,13 @@ public class DBConnector {
 
 	public void manageEvent(WriteEventLogDomain status, WriteEventLogDomain eventLogDomain) {
 		if (status.getEventType() != null && status.getEventType().equalsIgnoreCase("DL")) {
-			this.getJdbcTemplate()
-					.execute("UPDATE SHIPING_EVENT_LOG set status = 'DELIVERED', EVENTTYPE = '"
-							+ status.getEventType() + "' WHERE TRACKING_NUMBER ='"
-							+ eventLogDomain.getTrackingNumber() + "'");
+			this.getJdbcTemplate().update(
+					"UPDATE SHIPING_EVENT_LOG set status = 'DELIVERED', EVENTARRIVALLOCATION=?, EVENTCITY=?, EVENTCOUNTRY=?, EVENTDATE=?, EVENTDESCRIPTION=?, "
+							+ "EVENTSTATE=?, EVENTSTATUSEXCEPTIONCODE=?,EVENTSTATUSEXCEPTIONDESC=?, EVENTTYPE=?, EVENTZIP=? WHERE TRACKING_NUMBER =?",
+					new Object[] { status.getEventArrivalLocation(), status.getEventCity(), status.getEventCountry(),
+							status.getEventDate(), status.getEventDescription(), status.getEventState(),
+							status.getEventStatusExceptionCode(), status.getStatusExceptionDescription(),
+							status.getEventType(), status.getEventZip(), eventLogDomain.getTrackingNumber() });
 			// Archive
 			this.getJdbcTemplate().execute(
 					"INSERT INTO shiping_event_log_ARCHIVE (ID, STATUS,EVENTARRIVALLOCATION, EVENTCITY, EVENTCOUNTRY, "
@@ -47,12 +51,14 @@ public class DBConnector {
 							+ "EVENTZIP, INVOICE_NO,  TRACKING_NUMBER FROM shiping_event_log WHERE EVENTTYPE = 'DL'");
 			// Delete
 			this.getJdbcTemplate().execute("delete FROM shiping_event_log WHERE EVENTTYPE = 'DL'");
-		} else if(status.getEventType() != null){
-			this.getJdbcTemplate()
-					.execute("UPDATE SHIPING_EVENT_LOG set EVENTTYPE = '" + status.getEventType()
-							+ "', EVENTDESCRIPTION='" + status.getEventDescription() + "', EVENTSTATUSEXCEPTIONCODE='"
-							+ status.getEventStatusExceptionCode() + "' WHERE TRACKING_NUMBER ='"
-							+ eventLogDomain.getTrackingNumber() + "'");
+		} else if (status.getEventType() != null) {
+			this.getJdbcTemplate().update(
+					"UPDATE SHIPING_EVENT_LOG set EVENTARRIVALLOCATION=?, EVENTCITY=?, EVENTCOUNTRY=?, EVENTDATE=?, EVENTDESCRIPTION=?, "
+							+ "EVENTSTATE=?, EVENTSTATUSEXCEPTIONCODE=?,EVENTSTATUSEXCEPTIONDESC=?, EVENTTYPE=?, EVENTZIP=? WHERE TRACKING_NUMBER =?",
+					new Object[] { status.getEventArrivalLocation(), status.getEventCity(), status.getEventCountry(),
+							status.getEventDate(), status.getEventDescription(), status.getEventState(),
+							status.getEventStatusExceptionCode(), status.getStatusExceptionDescription(),
+							status.getEventType(), status.getEventZip(), eventLogDomain.getTrackingNumber() });
 		}
 
 	}

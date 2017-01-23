@@ -5,20 +5,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 public class WriteEventLogDomain {
 
 	protected String eventArrivalLocation;
-	/**
-	 * @return the statusExceptionDescription
-	 */
-	public String getStatusExceptionDescription() {
-		return statusExceptionDescription;
-	}
-
-	/**
-	 * @param statusExceptionDescription the statusExceptionDescription to set
-	 */
-	public void setStatusExceptionDescription(String statusExceptionDescription) {
-		this.statusExceptionDescription = statusExceptionDescription;
-	}
-
 	protected String eventCity;
 	protected String eventCountry;
 	protected XMLGregorianCalendar eventDate;
@@ -309,5 +295,17 @@ public class WriteEventLogDomain {
 	public void setTrackingNumber(String value) {
 		this.trackingNumber = value;
 	}
+	/**
+	 * @return the statusExceptionDescription
+	 */
+	public String getStatusExceptionDescription() {
+		return statusExceptionDescription;
+	}
 
+	/**
+	 * @param statusExceptionDescription the statusExceptionDescription to set
+	 */
+	public void setStatusExceptionDescription(String statusExceptionDescription) {
+		this.statusExceptionDescription = statusExceptionDescription;
+	}
 }
